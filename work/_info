@@ -1,0 +1,125 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\altera\13.0sp1
+vControl_Unit
+Z1 Im3XkmF42SDM^i`]93N>OJ2
+Z2 V^>mOeNP3Vz5K=j`8i[WoL2
+Z3 dC:\Users\Lenovo\Desktop\CA_Project\CA_Project
+Z4 w1785267502
+Z5 8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Control_Unit.v
+Z6 FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\Control_Unit.v
+L0 15
+Z7 OV;L;10.1d;51
+r1
+31
+Z8 o-work work -O0
+Z9 n@control_@unit
+Z10 !s100 C;a0?[`^n=25HJPo@iC833
+Z11 !s108 1785267575.209000
+Z12 !s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Control_Unit.v|
+Z13 !s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Control_Unit.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vMemory_Router
+Z14 I?4GhMiRMMj1<d]FCje_D13
+Z15 V0Wz`4l1816g07660gQ?jV1
+R3
+Z16 w1785267539
+Z17 8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Memory_Router.v
+Z18 FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\Memory_Router.v
+L0 21
+R7
+r1
+31
+R8
+Z19 n@memory_@router
+Z20 !s100 Ak=Q0ONSodj25DzcX1SD^0
+Z21 !s108 1785267575.347000
+Z22 !s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Memory_Router.v|
+Z23 !s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Memory_Router.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vMIPS_Datapath
+Z24 I3kHVfk1gFHMXOPJl@4bZ=2
+Z25 ViaZ[gSYzg^;:9SK`:KWln3
+R3
+Z26 w1785267527
+Z27 8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\DataPath.v
+Z28 FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\DataPath.v
+L0 20
+R7
+r1
+31
+R8
+Z29 n@m@i@p@s_@datapath
+Z30 !s100 =>ofPRkRY`PJ;hN8S5NZB1
+Z31 !s108 1785267575.285000
+Z32 !s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\DataPath.v|
+Z33 !s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\DataPath.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vMIPS_Processor_Top
+Z34 I5VSAfKeIgK<zH0eTYTIdD2
+Z35 VY[i9POdFzUW^I]nI3Ra`k0
+R3
+Z36 w1785267569
+Z37 8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\MIPS_Processor_Top.v
+Z38 FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\MIPS_Processor_Top.v
+L0 23
+R7
+r1
+31
+R8
+Z39 n@m@i@p@s_@processor_@top
+Z40 !s100 ;fdKQkA9gHP6aDR37K1Mg1
+Z41 !s108 1785267575.407000
+Z42 !s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\MIPS_Processor_Top.v|
+Z43 !s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\MIPS_Processor_Top.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vtb_Control_Unit
+Z44 IP@n]M2fJdlN?Y?;I[8O[X3
+Z45 Vc^N]Sz4zEmlQQRIRRI?cN1
+R3
+Z46 w1785251473
+Z47 8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Control_Unit.v
+Z48 FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Control_Unit.v
+L0 12
+R7
+r1
+31
+R8
+Z49 ntb_@control_@unit
+!i10b 1
+Z50 !s100 _oJL4`mP7O?6VF;UG=WK>2
+!s85 0
+Z51 !s108 1785267575.464000
+Z52 !s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Control_Unit.v|
+Z53 !s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Control_Unit.v|
+!s101 -O0
+vtb_Memory_Router
+!i10b 1
+!s100 [k3NE^Hck:0^:gR;Uah;z3
+ImbXIAi5dk@F0Y;aIzmAcg3
+Z54 VB=6=0UggQIb>B8OSd>Qie2
+R3
+Z55 w1785252373
+8C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Memory_Router.v
+FC:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Memory_Router.v
+L0 7
+R7
+r1
+!s85 0
+31
+!s108 1785267575.522000
+!s107 C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Memory_Router.v|
+!s90 -reportprogress|300|-work|work|C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Memory_Router.v|
+!s101 -O0
+R8
+Z56 ntb_@memory_@router

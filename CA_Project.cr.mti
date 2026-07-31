@@ -1,0 +1,43 @@
+C:/Users/Lenovo/Desktop/CA_Project/CA_Project/MIPS_Processor_Top.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\MIPS_Processor_Top.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module MIPS_Processor_Top
+
+Top level modules:
+	MIPS_Processor_Top
+
+} {} {}} C:/Users/Lenovo/Desktop/CA_Project/CA_Project/tb_Memory_Router.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Memory_Router.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_Memory_Router
+
+Top level modules:
+	tb_Memory_Router
+
+} {} {}} C:/Users/Lenovo/Desktop/CA_Project/CA_Project/DataPath.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\DataPath.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module MIPS_Datapath
+
+Top level modules:
+	MIPS_Datapath
+
+} {} {}} C:/Users/Lenovo/Desktop/CA_Project/CA_Project/Control_Unit.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Control_Unit.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module Control_Unit
+
+Top level modules:
+	Control_Unit
+
+} {} {}} C:/Users/Lenovo/Desktop/CA_Project/CA_Project/Memory_Router.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\Memory_Router.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module Memory_Router
+
+Top level modules:
+	Memory_Router
+
+} {} {}} C:/Users/Lenovo/Desktop/CA_Project/CA_Project/tb_Control_Unit.v {1 {vlog -work work {C:\Users\Lenovo\Desktop\CA_Project\CA_Project\tb_Control_Unit.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_Control_Unit
+
+Top level modules:
+	tb_Control_Unit
+
+} {} {}}

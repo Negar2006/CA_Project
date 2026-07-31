@@ -1,0 +1,187 @@
+/**
+ * Memory Router Module
+ * 
+ * Memory Map:
+ * - Boot ROM:       0x00000000 - 0x00000FFF (4KB)
+ * - User RAM:       0x00001000 - 0x00001FFF (4KB)
+ * - Crypto Accelerator: 0x00002000 - 0x000020FF (256B)
+ */
+
+module Memory_Router (
+    input  wire        clk,
+    input  wire        rst,
+    input  wire        mode_bit,
+    input  wire        secure_mode_fault,
+    input  wire        exception_taken,
+    input  wire        instr_read_en,
+    input  wire [31:0] instr_addr,
+    output wire        instr_allow,
+    output wire [31:0] instr_read_data,
+    output wire        instr_violation,
+    input  wire        data_read_en,
+    input  wire [31:0] data_read_addr,
+    output wire        data_read_allow,
+    output wire [31:0] data_read_data,
+    input  wire        data_write_en,
+    input  wire [31:0] data_write_addr,
+    input  wire [31:0] data_write_data,
+    output wire        data_write_allow,
+    output wire        violation_detected
+);
+
+    // Memory Map Definitions
+    localparam BOOT_ROM_BASE      = 32'h00000000;
+    localparam BOOT_ROM_END       = 32'h00000FFF;
+    localparam USER_RAM_BASE      = 32'h00001000;
+    localparam USER_RAM_END       = 32'h00001FFF;
+    localparam CRYPTO_BASE        = 32'h00002000;
+    localparam CRYPTO_END         = 32'h000020FF;
+    
+    // Memory arrays
+    reg [31:0] boot_rom [0:1023];
+    reg [31:0] user_ram  [0:1023];
+    reg [31:0] crypto_regs [0:63];
+    
+    reg        instr_violation_reg;
+    reg        violation_detected_reg;
+    
+    // Address Range Detection
+    wire instr_in_boot_rom = (instr_addr >= BOOT_ROM_BASE && 
+                              instr_addr <= BOOT_ROM_END);
+    wire instr_in_user_ram = (instr_addr >= USER_RAM_BASE && 
+                              instr_addr <= USER_RAM_END);
+    wire instr_in_crypto   = (instr_addr >= CRYPTO_BASE && 
+                              instr_addr <= CRYPTO_END);
+    
+    wire data_read_in_boot_rom = (data_read_addr >= BOOT_ROM_BASE && 
+                                  data_read_addr <= BOOT_ROM_END);
+    wire data_read_in_user_ram = (data_read_addr >= USER_RAM_BASE && 
+                                  data_read_addr <= USER_RAM_END);
+    wire data_read_in_crypto   = (data_read_addr >= CRYPTO_BASE && 
+                                  data_read_addr <= CRYPTO_END);
+    
+    wire data_write_in_boot_rom = (data_write_addr >= BOOT_ROM_BASE && 
+                                   data_write_addr <= BOOT_ROM_END);
+    wire data_write_in_user_ram = (data_write_addr >= USER_RAM_BASE && 
+                                   data_write_addr <= USER_RAM_END);
+    wire data_write_in_crypto   = (data_write_addr >= CRYPTO_BASE && 
+                                   data_write_addr <= CRYPTO_END);
+    
+    // Access Permission Logic
+    wire instr_allow_secure = (instr_in_boot_rom || 
+                               instr_in_user_ram || 
+                               instr_in_crypto);
+    wire instr_allow_user   = (instr_in_user_ram);
+    
+    assign instr_allow = (mode_bit == 1'b1) ? instr_allow_secure : 
+                                               instr_allow_user;
+    
+    wire data_read_allow_secure = (data_read_in_user_ram || 
+                                   data_read_in_crypto);
+    wire data_read_allow_user   = (data_read_in_user_ram);
+    
+    assign data_read_allow = (mode_bit == 1'b1) ? data_read_allow_secure : 
+                                                   data_read_allow_user;
+    
+    wire data_write_allow_secure = (data_write_in_user_ram || 
+                                    data_write_in_crypto);
+    wire data_write_allow_user   = (data_write_in_user_ram);
+    
+    assign data_write_allow = (mode_bit == 1'b1) ? data_write_allow_secure : 
+                                                    data_write_allow_user;
+    
+    // Violation Detection
+    wire instr_violation_wire = instr_read_en && !instr_allow;
+    wire data_read_violation  = data_read_en && !data_read_allow;
+    wire data_write_violation = data_write_en && !data_write_allow;
+    
+    assign instr_violation = instr_violation_wire;
+    assign violation_detected = violation_detected_reg;
+    
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            instr_violation_reg <= 1'b0;
+            violation_detected_reg <= 1'b0;
+        end else if (instr_violation_wire || 
+                     data_read_violation || 
+                     data_write_violation ||
+                     secure_mode_fault) begin
+            instr_violation_reg <= instr_violation_wire;
+            violation_detected_reg <= 1'b1;
+        end else begin
+            instr_violation_reg <= 1'b0;
+            violation_detected_reg <= 1'b0;
+        end
+    end
+    
+    // Memory Access Implementation
+    
+    // Instruction Memory
+    reg [31:0] instr_read_data_reg;
+    assign instr_read_data = instr_read_data_reg;
+    
+    always @(posedge clk) begin
+        if (instr_read_en && instr_allow) begin
+            if (instr_in_boot_rom) begin
+                instr_read_data_reg <= boot_rom[instr_addr[11:2]];
+            end else if (instr_in_user_ram) begin
+                instr_read_data_reg <= user_ram[instr_addr[11:2]];
+            end else if (instr_in_crypto) begin
+                instr_read_data_reg <= crypto_regs[instr_addr[5:2]];
+            end else begin
+                instr_read_data_reg <= 32'b0;
+            end
+        end else begin
+            instr_read_data_reg <= 32'b0;
+        end
+    end
+    
+    // Data Read Memory
+    reg [31:0] data_read_data_reg;
+    assign data_read_data = data_read_data_reg;
+    
+    always @(posedge clk) begin
+        if (data_read_en && data_read_allow) begin
+            if (data_read_in_boot_rom) begin
+                data_read_data_reg <= boot_rom[data_read_addr[11:2]];
+            end else if (data_read_in_user_ram) begin
+                data_read_data_reg <= user_ram[data_read_addr[11:2]];
+            end else if (data_read_in_crypto) begin
+                data_read_data_reg <= crypto_regs[data_read_addr[5:2]];
+            end else begin
+                data_read_data_reg <= 32'b0;
+            end
+        end else begin
+            data_read_data_reg <= 32'b0;
+        end
+    end
+    
+    // Data Write Memory
+    integer i;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            // Initialize User RAM with zeros
+            for (i = 0; i < 1024; i = i + 1) begin
+                user_ram[i] <= 32'b0;
+            end
+            
+            // Initialize Crypto Registers with zeros
+            for (i = 0; i < 64; i = i + 1) begin
+                crypto_regs[i] <= 32'b0;
+            end
+            
+            // Optional: Initialize Boot ROM
+            // $readmemh("boot_rom.hex", boot_rom);
+            for (i = 0; i < 1024; i = i + 1) begin
+                boot_rom[i] <= 32'b0;
+            end
+        end else if (data_write_en && data_write_allow) begin
+            if (data_write_in_user_ram) begin
+                user_ram[data_write_addr[11:2]] <= data_write_data;
+            end else if (data_write_in_crypto) begin
+                crypto_regs[data_write_addr[5:2]] <= data_write_data;
+            end
+        end
+    end
+
+endmodule
