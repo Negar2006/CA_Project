@@ -1,55 +1,54 @@
-﻿# CA_Project
 # Dual-Mode MIPS Processor with Secure Boot
 
-## معرفی پروژه (Project Introduction)
-این پروژه یک پردازنده ۳۲-بیتی تک‌سیکله مبتنی بر معماری `MIPS` است که از دو حالت اجرای **Secure** و **User** پشتیبانی می‌کند. هدف اصلی این معماری، پیاده‌سازی مکانیزم `Secure Boot` است؛ به گونه‌ای که پردازنده تنها پس از تأیید یکپارچگی کد کاربر (از طریق یک شتاب‌دهنده سخت‌افزاری هش) اجازه اجرای آن را می‌دهد.
+## Project Introduction
+This project is a 32-bit single-cycle processor based on the `MIPS` architecture that supports two execution modes: **Secure** and **User**. The main goal of this architecture is to implement a `Secure Boot` mechanism; such that the processor only allows the execution of user code after verifying its integrity (via a hardware hash accelerator).
 
-## معماری و ماژول‌های پیاده‌سازی‌شده (Architecture & Modules)
-این سیستم بر اساس همکاری دو بخش اصلی طراحی شده است:
+## Architecture & Modules
+This system is designed based on the collaboration of two main components:
 
-1. **هسته پردازنده (MIPS Core):**
-   - **DataPath & Control Unit:** پشتیبانی از دستورات پایه MIPS (مانند `ADD`, `SUB`, `LW`, `SW`, `BEQ`, `J` و ...) به همراه پشتیبانی کامل از `Mode_Bit`.
-   - **DROP_PRIV Instruction:** یک آپ‌کد سفارشی ($6'b111111$) که پردازنده را از حالت Secure به حالت User برده و `PC` را به آدرس $0x1000$ منتقل می‌کند.
+1. **MIPS Core:**
+   - **DataPath & Control Unit:** Supports basic MIPS instructions (such as `ADD`, `SUB`, `LW`, `SW`, `BEQ`, `J`, etc.) along with full support for the `Mode_Bit`.
+   - **DROP_PRIV Instruction:** A custom opcode ($6'b111111$) that transitions the processor from Secure mode to User mode and sets the `PC` to address $0x1000$.
 
-2. **سیستم حافظه و ادوات جانبی:**
-   - **Memory Router:** مدیریت دسترسی به حافظه بر اساس `Mode_Bit`. در حالت User، خواندن از ROM یا دسترسی به شتاب‌دهنده هش مسدود شده و خطای امنیتی تولید می‌کند.
-   - **Hash Accelerator:** یک شتاب‌دهنده سخت‌افزاری مبتنی بر `XOR Accumulator` متصل به گذرگاه `MMIO` (آدرس پایه $0x2000$).
-   - **Hardware Watchdog (بخش امتیازی):** نظارت بر `PC`. در صورتی که پردازنده در حالت Secure باشد اما `PC` وارد محدوده User RAM شود، سیستم فوراً قفل و ریست می‌شود.
+2. **Memory System & Peripherals:**
+   - **Memory Router:** Manages memory access based on the `Mode_Bit`. In User mode, reading from the ROM or accessing the hash accelerator is blocked and generates a security fault.
+   - **Hash Accelerator:** A hardware accelerator based on an `XOR Accumulator` connected to the `MMIO` bus (base address $0x2000$).
+   - **Hardware Watchdog (Bonus Section):** Monitors the `PC`. If the processor is in Secure mode but the `PC` enters the User RAM range, the system is immediately locked and reset.
 
-## نگاشت حافظه (Memory Map)
-- $0x0000$ تا $0x0FFF$: `Boot ROM` (حاوی Bootloader)
-- $0x1000$ تا $0x1FFF$: `User RAM` (کد و داده‌های برنامه کاربر)
-- $0x2000$ تا $0x20FF$: `Crypto / Hash Accelerator`
+## Memory Map
+- $0x0000$ to $0x0FFF$: `Boot ROM` (Contains the Bootloader)
+- $0x1000$ to $0x1FFF$: `User RAM` (User program code and data)
+- $0x2000$ to $0x20FF$: `Crypto / Hash Accelerator`
 
-## روند راه‌اندازی امن (Secure Boot Flow)
-1. سیستم ریست شده و در حالت `Secure` با $PC = 0$ آغاز به کار می‌کند.
-2. برنامه `Bootloader` از ROM اجرا می‌شود.
-3. برنامه، کلمات ذخیره‌شده در `User RAM` را خوانده و به `Hash Accelerator` ارسال می‌کند.
-4. هش محاسبه‌شده با یک مقدار مرجع مقایسه می‌شود.
-5. **در صورت تطابق:** دستور `DROP_PRIV` اجرا می‌شود و پردازنده برای اجرای برنامه وارد `User Mode` می‌شود.
-6. **در صورت عدم تطابق:** سیستم در حالت `Secure` باقی مانده و اجرای کد کاربر متوقف می‌شود.
+## Secure Boot Flow
+1. The system resets and starts in `Secure` mode with $PC = 0$.
+2. The `Bootloader` program is executed from the ROM.
+3. The program reads the words stored in the `User RAM` and sends them to the `Hash Accelerator`.
+4. The calculated hash is compared with a reference value.
+5. **On Match:** The `DROP_PRIV` instruction is executed, and the processor enters `User Mode` to run the user program.
+6. **On Mismatch:** The system remains in `Secure` mode, and user code execution is halted.
 
-## ساختار فایل‌های پروژه (Project Files)
+## Project Files
 
-این پروژه شامل فایل‌های Verilog زیر است:
+This project includes the following Verilog files:
 
-### ماژول‌های اصلی (Core Modules)
-- `MIPS_Processor_Top.v`: ماژول سطح بالا (Top-Level) که تمام بخش‌ها را به هم متصل می‌کند.
-- `DataPath.v`: مسیر داده پردازنده شامل رجیستر فایل، ALU و PC.
-- `Control_Unit.v`: واحد کنترل برای دیکد کردن دستورات و مدیریت `Mode_Bit` و `DROP_PRIV`.
-- `Memory_Router.v`: روتر حافظه برای مدیریت دسترسی‌ها و اعمال محدودیت‌های امنیتی.
-- `Hash_Accelerator.v`: شتاب‌دهنده سخت‌افزاری هش (MMIO).
-- `Hardware_Watchdog.v`: نگهبان سخت‌افزاری برای ریست کردن سیستم در صورت نقض امنیتی.
+### Core Modules
+- `MIPS_Processor_Top.v`: Top-Level module that connects all components.
+- `DataPath.v`: Processor datapath including the register file, ALU, and PC.
+- `Control_Unit.v`: Control unit for decoding instructions and managing `Mode_Bit` and `DROP_PRIV`.
+- `Memory_Router.v`: Memory router for managing access and applying security restrictions.
+- `Hash_Accelerator.v`: Hardware hash accelerator (MMIO).
+- `Hardware_Watchdog.v`: Hardware watchdog to reset the system in case of a security violation.
 
-### تست‌بنچ‌ها (Testbenches)
-- `MIPS_Processor_Top_tb.v`: تست‌بنچ اصلی و نهایی سیستم برای شبیه‌سازی Secure Boot (سناریوی موفق و ناموفق).
-- `tb_Hardware_Watchdog.v`: تست‌بنچ ایزوله برای بررسی عملکرد نگهبان سخت‌افزاری.
-- `tb_Control_Unit.v` / `tb_Memory_Router.v` / `tb_Memory_Router2.v` / `tb_Hash_Accelerator.v`: تست‌بنچ‌های سطح ماژول برای بررسی عملکرد هر بخش به صورت جداگانه.
+### Testbenches
+- `MIPS_Processor_Top_tb.v`: Main and final testbench of the system for simulating Secure Boot (success and failure scenarios).
+- `tb_Hardware_Watchdog.v`: Isolated testbench for checking the hardware watchdog's functionality.
+- `tb_Control_Unit.v` / `tb_Memory_Router.v` / `tb_Memory_Router2.v` / `tb_Hash_Accelerator.v`: Module-level testbenches to verify the functionality of each part individually.
 
-## فایل‌های ورودی و شبیه‌سازی (Simulation)
-برای تست سیستم به فایل‌های هگز زیر نیاز است:
-- `boot_rom.hex`: کدهای ماشین مربوط به Bootloader.
-- `user_prog.hex`: برنامه معتبر کاربر (برای تست موفق).
-- `bad_prog.hex`: برنامه دستکاری‌شده (برای تست شکست Secure Boot).
+## Input Files and Simulation
+The following hex files are required to test the system:
+- `boot_rom.hex`: Machine code for the Bootloader.
+- `user_prog.hex`: Valid user program (for success test).
+- `bad_prog.hex`: Manipulated program (for Secure Boot failure test).
 
-برای شبیه‌سازی سیستم، فایل `MIPS_Processor_Top_tb.v` را در نرم‌افزارهای شبیه‌ساز (مانند ModelSim یا QuestaSim) اجرا کنید. این تست‌بنچ به صورت خودکار هر دو سناریوی کد سالم و مخرب را بررسی کرده و نتایج را در کنسول (به صورت PASS/FAIL) چاپ می‌کند.
+To simulate the system, run the `MIPS_Processor_Top_tb.v` file in your simulation software (such as ModelSim or QuestaSim). This testbench automatically checks both valid and malicious code scenarios and prints the results in the console (as PASS/FAIL).
