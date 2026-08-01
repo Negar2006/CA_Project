@@ -1,7 +1,5 @@
 ﻿# CA_Project
-<div dir="rtl" align="right">
-
-# پردازنده MIPS دو حالته با قابلیت Secure Boot
+# Dual-Mode MIPS Processor with Secure Boot
 
 ## معرفی پروژه (Project Introduction)
 این پروژه یک پردازنده ۳۲-بیتی تک‌سیکله مبتنی بر معماری `MIPS` است که از دو حالت اجرای **Secure** و **User** پشتیبانی می‌کند. هدف اصلی این معماری، پیاده‌سازی مکانیزم `Secure Boot` است؛ به گونه‌ای که پردازنده تنها پس از تأیید یکپارچگی کد کاربر (از طریق یک شتاب‌دهنده سخت‌افزاری هش) اجازه اجرای آن را می‌دهد.
@@ -19,9 +17,9 @@
    - **Hardware Watchdog (بخش امتیازی):** نظارت بر `PC`. در صورتی که پردازنده در حالت Secure باشد اما `PC` وارد محدوده User RAM شود، سیستم فوراً قفل و ریست می‌شود.
 
 ## نگاشت حافظه (Memory Map)
-- آدرس $0x0000$ تا $0x0FFF$: حافظه `Boot ROM` (حاوی Bootloader)
-- آدرس $0x1000$ تا $0x1FFF$: حافظه `User RAM` (کد و داده‌های برنامه کاربر)
-- آدرس $0x2000$ تا $0x20FF$: بخش `Crypto / Hash Accelerator`
+- $0x0000$ تا $0x0FFF$: `Boot ROM` (حاوی Bootloader)
+- $0x1000$ تا $0x1FFF$: `User RAM` (کد و داده‌های برنامه کاربر)
+- $0x2000$ تا $0x20FF$: `Crypto / Hash Accelerator`
 
 ## روند راه‌اندازی امن (Secure Boot Flow)
 1. سیستم ریست شده و در حالت `Secure` با $PC = 0$ آغاز به کار می‌کند.
@@ -46,14 +44,12 @@
 ### تست‌بنچ‌ها (Testbenches)
 - `MIPS_Processor_Top_tb.v`: تست‌بنچ اصلی و نهایی سیستم برای شبیه‌سازی Secure Boot (سناریوی موفق و ناموفق).
 - `tb_Hardware_Watchdog.v`: تست‌بنچ ایزوله برای بررسی عملکرد نگهبان سخت‌افزاری.
-- فایل‌های `tb_Control_Unit.v` / `tb_Memory_Router.v` / `tb_Memory_Router2.v` / `tb_Hash_Accelerator.v`: تست‌بنچ‌های سطح ماژول برای بررسی عملکرد هر بخش به صورت جداگانه.
+- `tb_Control_Unit.v` / `tb_Memory_Router.v` / `tb_Memory_Router2.v` / `tb_Hash_Accelerator.v`: تست‌بنچ‌های سطح ماژول برای بررسی عملکرد هر بخش به صورت جداگانه.
 
 ## فایل‌های ورودی و شبیه‌سازی (Simulation)
 برای تست سیستم به فایل‌های هگز زیر نیاز است:
-- فایل `boot_rom.hex`: کدهای ماشین مربوط به Bootloader.
-- فایل `user_prog.hex`: برنامه معتبر کاربر (برای تست موفق).
-- فایل `bad_prog.hex`: برنامه دستکاری‌شده (برای تست شکست Secure Boot).
+- `boot_rom.hex`: کدهای ماشین مربوط به Bootloader.
+- `user_prog.hex`: برنامه معتبر کاربر (برای تست موفق).
+- `bad_prog.hex`: برنامه دستکاری‌شده (برای تست شکست Secure Boot).
 
 برای شبیه‌سازی سیستم، فایل `MIPS_Processor_Top_tb.v` را در نرم‌افزارهای شبیه‌ساز (مانند ModelSim یا QuestaSim) اجرا کنید. این تست‌بنچ به صورت خودکار هر دو سناریوی کد سالم و مخرب را بررسی کرده و نتایج را در کنسول (به صورت PASS/FAIL) چاپ می‌کند.
-
-</div>
